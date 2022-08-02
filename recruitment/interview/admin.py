@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.db.models import Q
-
+from django.utils.safestring import mark_safe
 from interview import models
 from django.http import HttpResponse
-
+from django.contrib import messages
 # Register your models here.
 from datetime import datetime
 from interview.dingtalk import send
@@ -11,6 +11,7 @@ from interview.models import Candidate
 import logging
 import csv
 from interview.candidate_fieldset import default_fieldsets_frist, default_fieldsets_second, default_fieldsets
+from jobs.models import Resume
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,7 @@ def notify_interviewer(modelamin, request, queryset):
         candidates = obj.username + ";" + candidates
         interviewer = obj.first_interviewer_user.useraname + ";" + interviewer
     send("候选人%s 进入面试环节，亲爱的面试官，请准备好面试： %s" % (candidates, interviewer))
+    messages.add_message(request, messages.INFO, '已经成功发送面试通知')
 
 
 def export_model_as_csv(modeladmin, request, queryset):
@@ -64,14 +66,24 @@ class CandidateAdmin(admin.ModelAdmin):
         return request.user.has_perm('%s.%s' % (opts.app_label, 'export'))
 
     list_display = (
-        'username', 'city', 'bachelor_school', 'first_score', 'first_result', 'first_interviewer_user',
-        'second_result', 'second_interviewer_user', 'hr_score', 'hr_result', 'last_editor'
-    )
+        'username', 'city', 'bachelor_school', 'get_resume', 'first_score', 'first_result', 'first_interviewer_user', 'second_score',
+        'second_result', 'second_interviewer_user', 'hr_score', 'hr_result', 'hr_interviewer_user',)
     list_filter = ('city', 'first_result', 'second_result', 'hr_result', 'first_interviewer_user', 'second_interviewer_user', 'hr_interviewer_user')
 
     search_fields = ('username', 'phone', 'email', 'bachelor_school',)
 
     ordering = ('hr_result', 'second_result', 'first_result')
+
+    def get_resume(self, obj):
+        if not obj.phone:
+            return ""
+        resumes = Resume.objects.filter(phone=obj.phone)
+        if resumes and len(resumes) > 0:
+            return mark_safe('<a href="/resume/%s" target="_blank">%s</a>' % (resumes[0].id, '查看简历'))
+        return ""
+
+    get_resume.short_description = '查看简历'
+    get_resume.allow_tags = True
 
     default_list_editable = ['first_interviewer_user', 'second_interviewer_user']
     # readonly_fields = ['first_interviewer_user', 'second_interviewer_user']
@@ -117,5 +129,7 @@ class CandidateAdmin(admin.ModelAdmin):
             return default_fieldsets_frist
         if 'interviewer' in group_names and obj.second_interviewer_user == request.user:
             return default_fieldsets_second
+        return default_fieldsets
+
 
 admin.site.register(models.Candidate, CandidateAdmin)

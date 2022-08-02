@@ -34,6 +34,7 @@ SIMPLE_BACKEND_REDIRECT_URL = '/accounts/login/'
 
 INSTALLED_APPS = [
     'grappelli',
+    'bootstrap4',
     'registration',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -164,17 +165,17 @@ LOGGING = {
 
 
 # LDAP
-LDAP_AUTH_URL = 'ldap://localhost:389/'
-LDAP_AUTH_USE_TLS = False
-LDAP_AUTH_SEARCH_BASE = 'dc=ihopeit,dc=com'
-LDAP_AUTH_OBJECT_CLASS = 'inetOrgPerson'
-LDAP_AUTH_USE_FIELDS = {
-    "username": "cn",
-    "first_name": "givenName",
-    "last_name": "sn",
-    "email": "mail",
-}
-LDAP_AUTH_USE_LOOKUP_FIELDS = ("username",)
-LDAP_AUTH_CONNECTION_USERNAME = None
-LDAP_AUTH_CONNECTION_PASSWORD = None
-AUTHENTICATION_BACKENDS = {"django_python3_ldap.auth.LDAPBackend", 'django.contrib.auth.backends.ModelBackend',}
+# LDAP_AUTH_URL = 'ldap://localhost:389/'
+# LDAP_AUTH_USE_TLS = False
+# LDAP_AUTH_SEARCH_BASE = 'dc=ihopeit,dc=com'
+# LDAP_AUTH_OBJECT_CLASS = 'inetOrgPerson'
+# LDAP_AUTH_USE_FIELDS = {
+#     "username": "cn",
+#     "first_name": "givenName",
+#     "last_name": "sn",
+#     "email": "mail",
+# }
+# LDAP_AUTH_USE_LOOKUP_FIELDS = ("username",)
+# LDAP_AUTH_CONNECTION_USERNAME = None
+# LDAP_AUTH_CONNECTION_PASSWORD = None
+# AUTHENTICATION_BACKENDS = {"django_python3_ldap.auth.LDAPBackend", 'django.contrib.auth.backends.ModelBackend',}
