@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 # Register your models here.
 from datetime import datetime
-from interview.dingtalk import send
+from .tasks import sen_dingtalk_message
 from interview.models import Candidate
 import logging
 import csv
@@ -25,7 +25,7 @@ def notify_interviewer(modelamin, request, queryset):
     for obj in queryset:
         candidates = obj.username + ";" + candidates
         interviewer = obj.first_interviewer_user.useraname + ";" + interviewer
-    send("候选人%s 进入面试环节，亲爱的面试官，请准备好面试： %s" % (candidates, interviewer))
+    sen_dingtalk_message.delay("候选人%s 进入面试环节，亲爱的面试官，请准备好面试： %s" % (candidates, interviewer))
     messages.add_message(request, messages.INFO, '已经成功发送面试通知')
 
 

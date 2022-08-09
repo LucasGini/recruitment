@@ -9,6 +9,9 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from .models import Cities, JobTypes
 from django.views.generic.edit import CreateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def joblist(request):
@@ -28,6 +31,7 @@ def detail(request, job_id):
     try:
         job = Job.objects.get(pk=job_id)
         job.city_name = Cities[job.job_city][1]
+        logger.info('job info fetched from database jobid:%s' % job_id)
     except Job.DoesNotExist:
         raise Http404("Job does not exist")
 
