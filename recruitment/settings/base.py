@@ -30,6 +30,9 @@ ALLOWED_HOSTS = []
 LOGIN_REDIRECT_URL = '/'
 SIMPLE_BACKEND_REDIRECT_URL = '/accounts/login/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -43,17 +46,21 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_python3_ldap',
-    'jobs',
+    'jobs.apps.JobsConfig',
     'interview',
     'rest_framework',
+    'django_celery_beat',
+    'django_oss_storage',
+    'running.apps.RunningConfig',
+    'recruitment.apps.UniversalManagerApp'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.cache.UpdateCacheMiddleware',    # 整站缓存
+    # 'django.middleware.cache.UpdateCacheMiddleware',    # 整站缓存
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',  # 整站缓存
+    # 'django.middleware.cache.FetchFromCacheMiddleware',  # 整站缓存
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -88,9 +95,18 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    },
+    # 'running': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'running',
+    #     'USER': 'recruitment',
+    #     'PASSWORD': 'recruitment',
+    #     'HOST': '127.0.0.1',
+    #     'PROT': '3306'
+    # }
 }
 
+DATABASE_ROUTERS = ['settings.router.DatabaseRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -129,6 +145,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
 
 LOGGING = {
     "version": 1,
@@ -186,6 +203,15 @@ CACHES = {
     }
 }
 
+# 阿里云OSS配置
+# DEFAULT_FILE_STORAGE = 'django_oss_storage.backends.OssMediaStorage'
+OSS_ACCESS_KEY_ID = ''
+OSS_ACCESS_KEY_SECRET = ''
+OSS_BUCKET_NAME = 'djangorecruit'
+OSS_ENDPOINT = 'oss-cn-beijin.aliyuncs.com'
+
+# 钉钉配置
+DINGTALK_WEB_HOOK = ''
 
 # Celery application definition
 CELERY_BROKER_URL = 'redis://localhost:6379/0'

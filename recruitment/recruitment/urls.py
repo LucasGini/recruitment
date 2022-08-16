@@ -18,8 +18,11 @@ from django.urls import path
 from django.conf.urls import url, include
 from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
+
+import settings.base
 from jobs.models import Job
 from rest_framework import routers, serializers, viewsets
+from django.conf.urls.static import static
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -57,5 +60,8 @@ urlpatterns = [
     url('^accounts/', include('registration.backends.simple.urls')),
     url(r'^api-auth/', include('rest_framework.urls'))
 ]
+urlpatterns += static(settings.base.MEDIA_URL,
+                      document_root=settings.base.MEDIA_ROOT)
+
 
 admin.site.site_header = _('匠果科技招聘管理系统')

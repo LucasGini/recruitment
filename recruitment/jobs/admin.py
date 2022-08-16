@@ -3,6 +3,7 @@ from .models import Job, Resume
 from django.contrib import messages
 from interview.models import Candidate
 from datetime import datetime
+from django.utils.html import format_html
 # Register your models here.
 
 
@@ -36,13 +37,20 @@ class ResumeAdmin(admin.ModelAdmin):
 
     actions = (enter_interview_process,)
 
-    list_display = ('username', 'applicant', 'city', 'apply_position', 'bachelor_school', 'master_school', 'major', 'create_date')
+    def image_tag(self, obj):
+        if obj.picture:
+            return format_html('<img src="{}" style="width:100px;height:80px;"/>'.format(obj.picture.url))
+        return ""
+    image_tag.allow_tags = True
+    image_tag.short_description = 'Image'
+    list_display = ('username', 'applicant', 'city', 'apply_position', 'bachelor_school', 'master_school', 'major', 'create_date',
+                    "image_tag", "attachment")
     readonly_fields = ('applicant', 'create_date', 'modified_date')
     fieldsets = (
         (None, {'fields': (
             'applicant', ('username', 'city', 'phone'),
             ('email', 'apply_position', 'born_address', 'gender',),
-            ('bachelor_school', 'master_school'), ('major', 'degree'), ('create_date', 'modified_date'),
+            ('bachelor_school', 'master_school'), ('major', 'degree', "picture", "attachment"), ('create_date', 'modified_date'),
             'candidate_introduction', 'work_experience', 'project_experience',)}),
     )
 

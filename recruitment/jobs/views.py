@@ -3,6 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.views.generic import DetailView
 
+from .forms import ResumeForm
 from .models import Job, Resume
 from django.template import loader
 from django.http import HttpResponse, Http404, HttpResponseRedirect
@@ -54,9 +55,17 @@ class ResumeCreateView(LoginRequiredMixin, CreateView):
     success_url = '/joblist/'
     model = Resume
     fields = ['username', 'city', 'phone',
-              'email', 'apply_position', 'gender',
+              'email', 'apply_position', 'gender', "picture", "attachment",
               'bachelor_school', 'master_school', 'major', 'degree',
               'candidate_introduction', 'work_experience', 'project_experience']
+
+    def post(self, request, *args, **kwargs):
+        form = ResumeForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(self.success_url)
+
+        return render(request, self.template_name, {'form': form})
 
     # 从URL请求参数带入默认值
     def get_initial(self):

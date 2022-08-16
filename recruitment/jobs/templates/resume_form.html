@@ -10,7 +10,7 @@
 {% bootstrap_messages %}
 
 <H2> 提交简历 </H2>
-<form method="post" method="post" class="from" style="width:600px;margin-left:5px">
+<form method="post" method="post" enctype="multipart/form-data" class="from" style="width:600px;margin-left:5px">
     {% csrf_token %}
     {% bootstrap_form form %}
     {% buttons %}
